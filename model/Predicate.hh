@@ -5,10 +5,11 @@
 class Predicate {
 
 	private:
-		std::string _nom;
-		Parameter _parameter;
+		std::string 	_nom;
+		Parameter 	_parameter;
+		bool 		_valeur;
 	
 	public:
-		Predicate(std::string nom, Parameter parameter) 
-			: _nom(nom), _parameter(parameter) {}
+		Predicate(std::string nom, Parameter parameter, bool valeur) 
+			: _nom(nom), _parameter(parameter), _valeur(valeur) {}
 };
