@@ -54,19 +54,22 @@
 
 programme:
     fact NL programme {
-        
+        std::cout << "fact" << std::endl;
+        std::cout << $1->toString() << std::endl;
     }
     | rule NL programme {
-        
+        std::cout << "Regle" << std::endl;
     }
     | NL programme
     | END NL {
+        std::cout << "fin" << std::endl;
         YYACCEPT;
     }
 
 fact:
     ALPHANUMERIC_CHAIN '(' parameters ')' {
         $$ = std::make_shared<Fact>($1, *$3, true);
+        std::cout << $$->toString() << std::endl;
     }
     | NO ALPHANUMERIC_CHAIN '(' parameters ')' {
         $$ = std::make_shared<Fact>($2, *$4, false);

@@ -13,10 +13,18 @@ find_package(FLEX)
 
 include_directories(parser model ${CMAKE_CURRENT_BINARY_DIR})
 
+file(GLOB MODEL
+    model/Parameter.cc
+    model/Fact.cc
+    model/Predicate.cc
+    model/Rule.cc
+)
+
 BISON_TARGET(parser parser/parser.yy ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp VERBOSE ${CMAKE_CURRENT_BINARY_DIR}/automate.txt)
 FLEX_TARGET(scanner parser/scanner.ll  ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp)
 ADD_FLEX_BISON_DEPENDENCY(scanner parser)
 add_executable(${PROJECT_NAME}
+    ${MODEL}
     parser/main.cc
     parser/contexte.hh
     parser/contexte.cc

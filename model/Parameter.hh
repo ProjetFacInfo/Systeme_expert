@@ -14,6 +14,8 @@ private:
 
 public:
 
-    Parameter(TypeParameter type, std::string name):_type(type),_name(name){}
+    Parameter(TypeParameter const & type, std::string const & name):_type(type),_name(name){}
+
+    std::string toString() const;
 
 };

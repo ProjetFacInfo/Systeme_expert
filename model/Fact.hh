@@ -17,6 +17,8 @@ public:
 
     Fact(std::string name, std::vector<Parameter> parameters, bool value):_name(name),_parameters(parameters),_value(value){}
 
+    std::string toString() const;
+
 };
 
    
