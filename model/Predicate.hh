@@ -13,6 +13,9 @@ class Predicate {
 		bool 			_value;
 	
 	public:
-		Predicate(std::string name, std::vector<Parameter> parameter, bool value) 
+		Predicate(std::string const & name, std::vector<Parameter> const & parameter, bool value) 
 			: _name(name), _parameter(parameter), _value(value) {}
+
+		std::string toString() const;
+
 };

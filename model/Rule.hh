@@ -7,16 +7,17 @@
 class Rule {
 
 	private:
-		std::string 					_name;
+		std::string 		_name;
 		std::vector<Predicate> 	_premise;
-		std::vector<Predicate> 	_consequence;
+		std::vector<Predicate> 	_consequent;
 
 	public:
 		Rule
 		(std::string name, 
 		 std::vector<Predicate> premise, 
-		 std::vector<Predicate> consequence)
-			: _name(name), _premise(premise), _consequence(consequence) {}
+		 std::vector<Predicate> consequent)
+			: _name(name), _premise(premise), _consequent(consequent) {}
 
+		std::string toString() const;
 
 };
