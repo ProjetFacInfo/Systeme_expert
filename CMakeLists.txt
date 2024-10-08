@@ -11,7 +11,7 @@ endif()
 find_package(BISON)
 find_package(FLEX)
 
-include_directories(parser ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(parser model ${CMAKE_CURRENT_BINARY_DIR})
 
 BISON_TARGET(parser parser/parser.yy ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp VERBOSE ${CMAKE_CURRENT_BINARY_DIR}/automate.txt)
 FLEX_TARGET(scanner parser/scanner.ll  ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp)

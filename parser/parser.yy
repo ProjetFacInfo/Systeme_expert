@@ -42,9 +42,13 @@
 %token <std::string>    VARIABLE
 %token <std::string>    ALPHANUMERIC_CHAIN
 
-%type <std::shared_ptr<Fact>>   fact
+%type <std::shared_ptr<Fact>>                       fact
 %type <std::shared_ptr<std::vector<Parameter>>>     parameters
 %type <std::shared_ptr<std::vector<Parameter>>>     parameters_rule
+%type <std::shared_ptr<Predicate>>                  predicate
+%type <std::shared_ptr<std::vector<Predicate>>>     premise
+%type <std::shared_ptr<std::vector<Predicate>>>     consequent
+%type <std::shared_ptr<Rule>>                       rule
 
 %%
 
@@ -81,7 +85,7 @@ parameters:
 
 rule:
     ALPHANUMERIC_CHAIN premise ARROW consequent {
-
+        $$ = std::make_shared<Rule>($1, *$2, *$4);
     }
 
 parameters_rule:
@@ -105,24 +109,27 @@ parameters_rule:
     }
 
 premise:
-    element {
-
+    predicate {
+        std::shared_ptr<std::vector<Predicate>> v = std::make_shared<std::vector<Predicate>>();
+        v->push_back(*$1);
+        $$ = v;
     }
-    | element AND premise {
-
+    | predicate AND premise {
+        $3->push_back(*$1);
+        $$ = $3;
     }
 
-element:
+predicate:
     ALPHANUMERIC_CHAIN '(' parameters_rule ')' {
-
+        $$ = std::make_shared<Predicate>($1, *$3, true);
     }
     | NO ALPHANUMERIC_CHAIN '(' parameters_rule ')' {
-
+        $$ = std::make_shared<Predicate>($2, *$4, false);
     }
 
 consequent:
     premise {
-        //$$ = $1;
+        $$ = $1;
     }
 
 
