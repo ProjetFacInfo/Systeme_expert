@@ -11,10 +11,11 @@ private:
 
     std::string _name;
     std::vector<Parameter> _parameters;
+    bool _value;
 
 public:
 
-    Fact(std::string name, std::vector<Parameter> parameters):_name(name),_parameters(parameters){}
+    Fact(std::string name, std::vector<Parameter> parameters, bool value):_name(name),_parameters(parameters),_value(value){}
 
 };
 
