@@ -7,24 +7,40 @@
 
 #include <cstring>
 
+#include <stdio.h>  
+#include <unistd.h>  
+
+#include "Engine.hh"
+
 int main( int  argc, char* argv[]) {
 
-    if (argc > 1){
-        Driver * driver = new Driver;
-        std::ifstream file(argv[1]);
-        Scanner * scanner = new Scanner(file, std::cout);
-        yy::Parser * parser = new yy::Parser(*scanner, *driver);
+    Scanner * scanner = new Scanner(std::cin, std::cout);
 
-        parser->parse();
-    }
-    else {
-        Driver * driver = new Driver;
-        Scanner * scanner = new Scanner(std::cin, std::cout);
-        yy::Parser * parser = new yy::Parser(*scanner, *driver);
+    int opt;
 
-        parser->parse();
+    while((opt = getopt(argc, argv, "f:g:")) != -1){
+        switch (opt)
+        {
+            case 'f':
+            {
+                std::ifstream file(optarg);
+                scanner = new Scanner(file, std::cout);
+                break;
+            }
+            case 'g':
+            {
+                Engine::STRATEGY = Strategy::BACKWARD;
+                Engine::setGoal(optarg);
+                break;
+            }
+            default:
+                break;
+            }
     }
-    
+
+    Driver * driver = new Driver;
+    yy::Parser * parser = new yy::Parser(*scanner, *driver);
+    parser->parse();    
     
     return 0;
 }

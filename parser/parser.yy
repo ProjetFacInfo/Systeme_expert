@@ -57,6 +57,7 @@
 
 programme:
     programme_ {
+        engine.run();
         YYACCEPT;
     }
 
