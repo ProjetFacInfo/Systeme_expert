@@ -17,3 +17,8 @@ std::string Predicate::toString() const {
 
 	return s;
 }
+
+bool Predicate::calc(Fact const &fact, std::map<std::string, std::string> *varToConst) const
+{
+    return false;
+}

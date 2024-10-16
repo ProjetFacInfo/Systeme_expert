@@ -17,3 +17,13 @@ std::string Rule::toString() const {
 
 	return s;
 }
+
+std::shared_ptr<std::vector<Fact>> Rule::checkPremise(std::vector<Fact> const &facts) const
+{
+    return nullptr;
+}
+
+std::shared_ptr<std::vector<Predicate>> Rule::checkConsequent(Predicate const &fact) const
+{
+    return nullptr;
+}

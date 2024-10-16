@@ -1,7 +1,7 @@
 #include "Engine.hh"
 
 Strategy Engine::STRATEGY = Strategy::FORWARD;
-std::unique_ptr<Fact> Engine::GOAL = nullptr;
+std::unique_ptr<Predicate> Engine::GOAL = nullptr;
 
 std::vector<std::string> split(std::string s, const std::string& delimiter) {
     std::vector<std::string> tokens;
@@ -33,7 +33,7 @@ void Engine::setGoal(std::string goal)
         parameters.push_back(Parameter(TypeParameter::CONSTANT, parameter_name));
     }
 
-    Engine::GOAL = std::make_unique<Fact>(Fact(name, parameters, true));
+    Engine::GOAL = std::make_unique<Predicate>(Predicate(name, parameters, true));
 
     std::cout << Engine::GOAL->toString() << std::endl;
 

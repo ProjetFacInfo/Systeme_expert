@@ -2,8 +2,10 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include "Parameter.hh"
+#include "Fact.hh"
 
 class Predicate {
 
@@ -17,5 +19,7 @@ class Predicate {
 			: _name(name), _parameter(parameter), _value(value) {}
 
 		std::string toString() const;
+
+		bool calc(Fact const & fact, std::map<std::string, std::string> * varToConst) const;
 
 };

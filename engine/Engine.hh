@@ -15,7 +15,7 @@ enum class Strategy{
 class Engine{
 public:
     static Strategy STRATEGY;
-    static std::unique_ptr<Fact> GOAL;
+    static std::unique_ptr<Predicate> GOAL;
     static void setGoal(std::string goal);
 private:
     std::vector<Fact> _facts;
