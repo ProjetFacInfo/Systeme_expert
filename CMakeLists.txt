@@ -11,7 +11,7 @@ endif()
 find_package(BISON)
 find_package(FLEX)
 
-include_directories(parser model ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(parser model engine ${CMAKE_CURRENT_BINARY_DIR})
 
 file(GLOB MODEL
     model/Parameter.cc
@@ -20,11 +20,16 @@ file(GLOB MODEL
     model/Rule.cc
 )
 
+file(GLOB ENGINE
+    engine/Engine.cc
+)
+
 BISON_TARGET(parser parser/parser.yy ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp VERBOSE ${CMAKE_CURRENT_BINARY_DIR}/automate.txt)
 FLEX_TARGET(scanner parser/scanner.ll  ${CMAKE_CURRENT_BINARY_DIR}/scanner.cpp)
 ADD_FLEX_BISON_DEPENDENCY(scanner parser)
 add_executable(${PROJECT_NAME}
     ${MODEL}
+    ${ENGINE}
     parser/main.cc
     parser/contexte.hh
     parser/contexte.cc

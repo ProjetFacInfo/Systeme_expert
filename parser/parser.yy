@@ -14,6 +14,7 @@
     #include "contexte.hh"
     #include "Fact.hh"
     #include "Rule.hh"
+    #include "Engine.hh"
 
     class Scanner;
     class Driver;
