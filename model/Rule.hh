@@ -13,9 +13,9 @@ class Rule {
 
 	public:
 		Rule
-		(std::string name, 
-		 std::vector<Predicate> premise, 
-		 std::vector<Predicate> consequent)
+		(std::string const & name, 
+		 std::vector<Predicate> const & premise, 
+		 std::vector<Predicate> const & consequent)
 			: _name(name), _premise(premise), _consequent(consequent) {}
 
 		std::string toString() const;
