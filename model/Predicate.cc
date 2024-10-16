@@ -14,4 +14,6 @@ std::string Predicate::toString() const {
 	s += "value : "; 
 
 	s += _value ? "true\n" : "false\n";
+
+	return s;
 }
