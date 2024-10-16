@@ -31,6 +31,8 @@
     #include "scanner.hh"
     #include "driver.hh"
 
+    Engine engine;
+
     #undef  yylex
     #define yylex scanner.yylex
 }
@@ -60,12 +62,10 @@ programme:
 
 programme_:
     fact NL programme_ {
-        std::cout << "fact" << std::endl;
-        std::cout << $1->toString() << std::endl;
+        engine.addFact(*$1);
     }
     | rule NL programme_ {
-        std::cout << "Regle" << std::endl;
-        std::cout << $1->toString() << std::endl;
+        engine.addRule(*$1);
     }
     | NL programme_
     | END NL

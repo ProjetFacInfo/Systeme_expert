@@ -10,5 +10,7 @@ private:
     std::vector<Fact> _facts;
     std::vector<Rule> _rules;
 public:
-    Engine(std::vector<Fact> facts, std::vector<Rule> rules):_facts(facts),_rules(rules){}
+    Engine():_facts(),_rules(){}
+    void addFact(Fact const & fact){_facts.push_back(fact);}
+    void addRule(Rule const & rule){_rules.push_back(rule);}
 };
