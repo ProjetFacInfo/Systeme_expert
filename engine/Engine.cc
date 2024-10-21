@@ -56,8 +56,10 @@ void Engine::run()
 
 void Engine::forwardChaining()
 {
+    // TODO
 }
 
 void Engine::backwardChaining()
 {
+    // TODO
 }

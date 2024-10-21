@@ -20,10 +20,12 @@ std::string Rule::toString() const {
 
 std::shared_ptr<std::vector<Fact>> Rule::checkPremise(std::vector<Fact> const &facts) const
 {
+	// TODO
     return nullptr;
 }
 
 std::shared_ptr<std::vector<Predicate>> Rule::checkConsequent(Predicate const &fact) const
 {
+	// TODO
     return nullptr;
 }

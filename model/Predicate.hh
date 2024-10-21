@@ -21,5 +21,7 @@ class Predicate {
 		std::string toString() const;
 
 		bool calc(Fact const & fact, std::map<std::string, std::string> * varToConst) const;
+		Predicate toNewPredicate(std::map<std::string, std::string> * varToConst);
+		Fact toFact(std::map<std::string, std::string> * varToConst) const;
 
 };

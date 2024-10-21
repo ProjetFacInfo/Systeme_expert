@@ -20,5 +20,18 @@ std::string Predicate::toString() const {
 
 bool Predicate::calc(Fact const &fact, std::map<std::string, std::string> *varToConst) const
 {
+	// TODO
     return false;
+}
+
+Predicate Predicate::toNewPredicate(std::map<std::string, std::string> *varToConst)
+{
+	// TODO
+    return Predicate("",std::vector<Parameter>(),true);
+}
+
+Fact Predicate::toFact(std::map<std::string, std::string> * varToConst) const
+{
+	// TODO
+    return Fact("",std::vector<Parameter>(),true);
 }
