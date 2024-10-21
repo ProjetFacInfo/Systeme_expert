@@ -15,6 +15,8 @@ public:
 
     Parameter(TypeParameter const & type, std::string const & value):_type(type),_value(value){}
 
+    bool operator==(Parameter const & parameter) const;
+
     std::string toString() const;
 
 

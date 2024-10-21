@@ -65,9 +65,7 @@ programme_:
     fact NL programme_ {
         engine.addFact(*$1);
     }
-    | rule NL programme_ {
-        engine.addRule(*$1);
-    }
+    | rule NL programme_
     | NL programme_
     | END NL
 
@@ -92,7 +90,9 @@ parameters:
 
 rule:
     ALPHANUMERIC_CHAIN premise ARROW consequent {
-        $$ = std::make_shared<Rule>($1, *$2, *$4);
+        for (auto const & cons : *$4){
+            engine.addRule(Rule($1, *$2, cons));
+        }
     }
 
 parameters_rule:

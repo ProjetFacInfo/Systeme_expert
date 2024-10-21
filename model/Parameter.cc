@@ -1,5 +1,10 @@
 #include "Parameter.hh"
 
+bool Parameter::operator==(Parameter const &parameter) const
+{
+    return _value == parameter._value && parameter._type == _type;
+}
+
 std::string Parameter::toString() const
 {
     std::string msg;
@@ -14,6 +19,6 @@ std::string Parameter::toString() const
     default:
         break;
     }
-    msg += _name;
+    msg += _value;
     return msg;
 }

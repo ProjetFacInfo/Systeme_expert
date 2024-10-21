@@ -18,26 +18,61 @@ std::string Predicate::toString() const {
 	return s;
 }
 
-bool Predicate::calc(Predicate const &predicate, std::map<std::string, std::string> *varToConst) const
+bool Predicate::calc(Predicate const & predicate, std::map<std::string, std::string> * p1top2, std::map<std::string, std::string> * p2top1) const
 {
-
-    return false;
+	if (this->getName() != predicate.getName() || this->getValue() != predicate.getValue() || _parameters.size() != predicate.getParameters().size()) return false;
+	auto it1 = _parameters.begin();
+	auto it2 = predicate.getParameters().begin();
+	while(it1 < _parameters.end()){
+		if (it1->getType() == TypeParameter::VARIABLE && it2->getType() == TypeParameter::CONSTANT){
+			(*p2top1)[it1->getValue()] = it2->getValue();
+		}
+		else if (it2->getType() == TypeParameter::VARIABLE && it1->getType() == TypeParameter::CONSTANT){
+			(*p1top2)[it2->getValue()] = it1->getValue();
+		}
+		else if (it1->getType() == TypeParameter::CONSTANT && it2->getType() == TypeParameter::CONSTANT && it1->getValue() != it2->getValue()) return false;
+		it1++;
+		it2++;
+	}
+    return true;
 }
 
-Predicate Predicate::toNewPredicate(std::map<std::string, std::string> *varToConst)
+bool Predicate::calc(Fact const &fact, std::map<std::string, std::string> *varToConst) const
 {
-	// TODO
-    return Predicate("",std::vector<Parameter>(),true);
+	if (this->getName() != fact.getName() || this->getValue() != fact.getValue() || _parameters.size() != fact.getParameters().size()) return false;
+	auto it1 = _parameters.begin();
+	auto it2 = fact.getParameters().begin();
+	while(it1 < _parameters.end()){
+		if (it1->getType() == TypeParameter::VARIABLE){
+			(*varToConst)[it1->getValue()] = it2->getValue();
+		}
+		else if (it1->getType() == TypeParameter::CONSTANT && it1->getValue() != it2->getValue()) return false;
+		it1++;
+		it2++;
+	}
+    return true;
+}
+
+Predicate Predicate::toNewPredicate(std::map<std::string, std::string> const & varToConst) const
+{
+	std::vector<Parameter> parameters;
+	for (auto const & parameter : _parameters){
+		auto it = varToConst.find(parameter.getValue());
+		if (it == varToConst.end()) parameters.push_back(Parameter(parameter.getType(),parameter.getValue()));
+		else parameters.push_back(Parameter(parameter.getType(),it->second));
+	}
+    return Predicate(_name,parameters,_value);
 }
 
 bool Predicate::isFact() const
 {
-	// TODO
-    return false;
+	for (auto const & parameter : _parameters){
+		if (parameter.getType() != TypeParameter::CONSTANT) return false;
+	}
+    return true;
 }
 
 Fact Predicate::toFact() const
 {
-	// TODO
-    return Fact("",std::vector<Parameter>(),true);
+    return Fact(_name,_parameters,_value);
 }
