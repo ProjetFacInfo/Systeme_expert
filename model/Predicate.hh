@@ -10,7 +10,7 @@
 class Predicate {
 
 	private:
-		std::string 		_name;
+		std::string _name;
 		std::vector<Parameter> _parameters;
 		bool 			_value;
 	
@@ -21,11 +21,15 @@ class Predicate {
 		std::string toString() const;
 
 		bool calc(Predicate const & predicate, std::map<std::string, std::string> * varToConst) const;
-
 		Predicate toNewPredicate(std::map<std::string, std::string> * varToConst);
 		bool isFact() const;
 		Fact toFact() const;
 
 
 		std::vector<Parameter> getParameters() const {return _parameters;}
+
+		std::string getName() const {
+			return _name;
+		}
+
 };

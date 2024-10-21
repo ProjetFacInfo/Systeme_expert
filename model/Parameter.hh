@@ -9,11 +9,11 @@ class Parameter{
 
 private:
     TypeParameter _type;
-    std::string _name;
+    std::string _value;
 
 public:
 
-    Parameter(TypeParameter const & type, std::string const & name):_type(type),_name(name){}
+    Parameter(TypeParameter const & type, std::string const & value):_type(type),_value(value){}
 
     std::string toString() const;
 
@@ -22,8 +22,8 @@ public:
         return _type;
     }
 
-    std::string getName() const {
-        return _name;
+    std::string getValue() const {
+        return _value;
     }
 
 };
