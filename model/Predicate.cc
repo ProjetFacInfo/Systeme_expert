@@ -30,7 +30,13 @@ Predicate Predicate::toNewPredicate(std::map<std::string, std::string> *varToCon
     return Predicate("",std::vector<Parameter>(),true);
 }
 
-Fact Predicate::toFact(std::map<std::string, std::string> * varToConst) const
+bool Predicate::isFact() const
+{
+	// TODO
+    return false;
+}
+
+Fact Predicate::toFact() const
 {
 	// TODO
     return Fact("",std::vector<Parameter>(),true);
