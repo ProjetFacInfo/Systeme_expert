@@ -6,7 +6,7 @@ std::string Predicate::toString() const {
 		
 	s += "parameter : \n "; 
 
-	for ( auto const & v : _parameter ) {
+	for ( auto const & v : _parameters ) {
 		s += v.toString();
 	}
 	s += "\n";
@@ -18,9 +18,9 @@ std::string Predicate::toString() const {
 	return s;
 }
 
-bool Predicate::calc(Fact const &fact, std::map<std::string, std::string> *varToConst) const
+bool Predicate::calc(Predicate const &predicate, std::map<std::string, std::string> *varToConst) const
 {
-	// TODO
+
     return false;
 }
 
