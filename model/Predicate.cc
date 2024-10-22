@@ -25,10 +25,10 @@ bool Predicate::calc(Predicate const & predicate, std::map<std::string, std::str
 	auto it2 = predicate._parameters.begin();
 	while(it1 != _parameters.end()){
 		if (it1->getType() == TypeParameter::VARIABLE && it2->getType() == TypeParameter::CONSTANT){
-			(*p1top2)[it1->getValue()] = it2->getValue();
+			(*p2top1)[it1->getValue()] = it2->getValue();
 		}
 		else if (it2->getType() == TypeParameter::VARIABLE && it1->getType() == TypeParameter::CONSTANT){
-			(*p2top1)[it2->getValue()] = it1->getValue();
+			(*p1top2)[it2->getValue()] = it1->getValue();
 		}
 		else if (it1->getType() == TypeParameter::CONSTANT && it2->getType() == TypeParameter::CONSTANT && it1->getValue() != it2->getValue()) return false;
 		it1++;
@@ -59,7 +59,7 @@ Predicate Predicate::toNewPredicate(std::map<std::string, std::string> const & v
 	for (auto const & parameter : _parameters){
 		auto it = varToConst.find(parameter.getValue());
 		if (it == varToConst.end()) parameters.push_back(Parameter(parameter.getType(),parameter.getValue()));
-		else parameters.push_back(Parameter(parameter.getType(),it->second));
+		else parameters.push_back(Parameter(TypeParameter::CONSTANT,it->second));
 	}
     return Predicate(_name,parameters,_value);
 }
