@@ -67,7 +67,7 @@ programme_:
     }
     | rule NL programme_
     | NL programme_
-    | END NL
+    | END
 
 fact:
     ALPHANUMERIC_CHAIN '(' parameters ')' {

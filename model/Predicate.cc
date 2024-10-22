@@ -22,13 +22,13 @@ bool Predicate::calc(Predicate const & predicate, std::map<std::string, std::str
 {
 	if (this->getName() != predicate.getName() || this->getValue() != predicate.getValue() || _parameters.size() != predicate.getParameters().size()) return false;
 	auto it1 = _parameters.begin();
-	auto it2 = predicate.getParameters().begin();
-	while(it1 < _parameters.end()){
+	auto it2 = predicate._parameters.begin();
+	while(it1 != _parameters.end()){
 		if (it1->getType() == TypeParameter::VARIABLE && it2->getType() == TypeParameter::CONSTANT){
-			(*p2top1)[it1->getValue()] = it2->getValue();
+			(*p1top2)[it1->getValue()] = it2->getValue();
 		}
 		else if (it2->getType() == TypeParameter::VARIABLE && it1->getType() == TypeParameter::CONSTANT){
-			(*p1top2)[it2->getValue()] = it1->getValue();
+			(*p2top1)[it2->getValue()] = it1->getValue();
 		}
 		else if (it1->getType() == TypeParameter::CONSTANT && it2->getType() == TypeParameter::CONSTANT && it1->getValue() != it2->getValue()) return false;
 		it1++;

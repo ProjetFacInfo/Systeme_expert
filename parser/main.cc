@@ -14,7 +14,7 @@
 
 int main( int  argc, char* argv[]) {
 
-    Scanner * scanner = new Scanner(std::cin, std::cout);
+    std::string str;
 
     int opt;
 
@@ -23,8 +23,7 @@ int main( int  argc, char* argv[]) {
         {
             case 'f':
             {
-                std::ifstream file(optarg);
-                scanner = new Scanner(file, std::cout);
+                str = optarg;
                 break;
             }
             case 'g':
@@ -35,12 +34,22 @@ int main( int  argc, char* argv[]) {
             }
             default:
                 break;
-            }
+        }
     }
 
     Driver * driver = new Driver;
-    yy::Parser * parser = new yy::Parser(*scanner, *driver);
-    parser->parse();    
+    if (str != ""){
+        std::ifstream file(str);
+        Scanner * scanner = new Scanner(file, std::cout);
+        yy::Parser * parser = new yy::Parser(*scanner, *driver);
+        parser->parse();    
+    }
+    else {
+        Scanner * scanner = new Scanner(std::cin, std::cout);
+        yy::Parser * parser = new yy::Parser(*scanner, *driver);
+        parser->parse();    
+    }
+    
     
     return 0;
 }

@@ -23,7 +23,11 @@ using token = yy::Parser::token;
 %{
     yylval = lval;
 %}
-fin return token::END;
+
+
+<<EOF>> return token::END;
+
+"fin" return token::END;
 
 "NON" {
     return token::NO;

@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <iostream>
 
 #include "Parameter.hh"
 #include "Fact.hh"

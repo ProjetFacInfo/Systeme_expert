@@ -30,12 +30,13 @@ void Engine::setGoal(std::string goal)
     std::vector<std::string> parameters_names = split(goal.substr(goal.find(delimiter)+1, goal.length()-2-goal.find(delimiter)) ,",");
 
     for (auto parameter_name : parameters_names){
-        parameters.push_back(Parameter(TypeParameter::CONSTANT, parameter_name));
+        if (parameter_name[0] >= 65 && parameter_name[0] <= 90)
+            parameters.push_back(Parameter(TypeParameter::VARIABLE, parameter_name));
+        else
+            parameters.push_back(Parameter(TypeParameter::CONSTANT, parameter_name));
     }
 
     Engine::GOAL = std::make_unique<Predicate>(Predicate(name, parameters, true));
-
-    std::cout << Engine::GOAL->toString() << std::endl;
 
 }
 
@@ -56,10 +57,18 @@ void Engine::run()
 
 void Engine::forwardChaining()
 {
-    // TODO
+    
 }
 
 void Engine::backwardChaining()
 {
-    // TODO
+    std::map<std::string, std::string> m;
+    auto tab = _rules[0].checkConsequent(*GOAL, &m);
+    for (auto const & predicate : *tab){
+        std::cout << predicate.toString() << std::endl;
+    }
+
+    for (auto const & _m : m){
+        std::cout << _m.first << " = " << _m.second << std::endl;
+    }
 }
