@@ -1,0 +1,11 @@
+f(constante1)
+p(constante2)
+p(constante2, constante4)
+p(constante1, constante4)
+k(constante3)
+
+r1 f(X) ET p(Y) -> ok(constante1,Y)
+r2 k(G) ET r(M) -> ok2(G,M)
+r3 ok(X,Y) -> ok2(X,Y)
+
+r4 f(X) ET p(X, Y) -> ok4(X, Y)

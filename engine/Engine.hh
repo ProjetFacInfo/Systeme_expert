@@ -28,5 +28,6 @@ public:
     void run();
 
     void forwardChaining();
-    void backwardChaining();
+    bool backwardChaining_(std::vector<std::string> *logs, std::map<std::string, std::string> *m, std::map<std::string, std::vector<std::string>> const & blacklist, Predicate const &goal) const ;
+    void backwardChaining() const;
 };
