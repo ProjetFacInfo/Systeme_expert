@@ -67,6 +67,10 @@ programme_:
     }
     | rule NL programme_
     | NL programme_
+    | fact END {
+        engine.addFact(*$1);
+    }
+    | rule END
     | END
 
 fact:

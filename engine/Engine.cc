@@ -106,16 +106,6 @@ void updateValues(std::map<std::string,std::string>* m1, std::map<std::string,st
     }
 }
 
-/*
-void insert(std::map<std::string,std::vector<std::string>>* m1, std::map<std::string,std::vector<std::string>> const & m2){
-    for (auto const & m: m2){
-        (*m1)[m.first] = m.second;
-    }
-}
-
-
-*/
-
 void updateKeys(std::map<std::string,std::string>* m1, std::map<std::string,std::string> const & m2){
     for (auto & m: *m1){
         auto el = m2.find(m.first);
@@ -148,11 +138,13 @@ private:
     std::list<std::list<std::string>>::iterator _current_it;
 public:
     RuleBlackListHandle(Rule const & rule, std::vector<std::map<std::string, std::string>> const & blacklist, std::map<std::string, std::string> const & m)
-    :_blacklist(blacklist){
+    :_blacklist(blacklist),_currentBlackList(){
         std::list<std::string> variables;
         for (auto const & premise : rule.getPremises()){
             auto vars = premise.getVariables();
-            vars.erase(std::remove_if(vars.begin(),vars.end(),[variables](std::string const & variable){return (std::find(variables.begin(), variables.end(), variable) != variables.end());}));
+            vars.erase(std::remove_if(vars.begin(),vars.end(),[&variables](std::string const & variable){
+                return (std::find(variables.begin(), variables.end(), variable) != variables.end());
+            }),vars.end());
             for (auto const & var: vars) variables.push_back(var);
             _variablesParameters.push_back(vars);
         }
@@ -165,7 +157,8 @@ public:
         for (auto const & bl : _blacklist){
             bool good = false;
             for (auto const & el : bl){
-                if (m.at(el.first) != el.second){
+                auto it = m.find(el.first);
+                if (it == m.end() || it->second != el.second){
                     good = true;
                     break;
                 }
@@ -177,24 +170,42 @@ public:
     std::vector<std::map<std::string,std::string>> getCurrentBlackList(){
         return _currentBlackList.top();
     }
-    void dec(){
+    void dec(std::map<std::string, std::string> * m){
+        for (auto const & variable: *_current_it) m->erase(variable); 
         _current_it--;
         _currentBlackList.pop();
+        for (auto const & variable: *_current_it) m->erase(variable); 
     }
     void inc(std::map<std::string, std::string> const & m){
         std::map<std::string, std::string> subMap = submap(m,*_current_it);
-        _currentBlackList.top().push_back(m);
+        _currentBlackList.top().push_back(subMap);
         _current_it++;
         _currentBlackList.push(std::vector<std::map<std::string, std::string>>());
     }
 };
+
+bool check(std::vector<std::map<std::string, std::string>> const & blacklist, std::map<std::string, std::string> const & m){
+    if (blacklist.empty()) return true;
+    for (auto const & bl : blacklist){
+        bool good = false;
+        for (auto const & el : bl){
+            auto it = m.find(el.first);
+            if (it == m.end() || it->second != el.second){
+                good = true;
+                break;
+            }
+        }
+        if (!good) return false;
+    }
+    return true;
+}
 
 
 bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::string, std::string>* m, std::vector<std::map<std::string, std::string>> const & blacklist, Predicate const & goal) const
 {
     for (auto const & fact: _facts){
         std::map<std::string, std::string> m_;
-        if(goal.calc(fact, &m_)){
+        if(goal.calc(fact, &m_) && check(blacklist, m_)){
             logs->push_back(fact.toString());
             insert(m,m_);
             return true;
@@ -207,18 +218,26 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
 
             std::vector<std::string> log_;
             std::map<std::string, std::string> m_;
-            bool good = true;
 
+            RuleBlackListHandle ruleBlackListHandle(rule,blacklist,m2);
+
+            bool good = true;
             auto it = premises->begin();
             while (it != premises -> end()){
                 auto p = it->toNewPredicate(m_);
-                if (!backwardChaining_(&log_,&m_,blacklist,p)) {
-                    good = false;
-                    break;
+                if (!backwardChaining_(&log_,&m_,ruleBlackListHandle.getCurrentBlackList(),p) || !ruleBlackListHandle.check(m_)) {
+                    if (it == premises->begin()){
+                        good = false;
+                        break;
+                    }
+                    it--;
+                    ruleBlackListHandle.dec(&m_);
                 }
-                it++;
+                else {
+                    it++;
+                    ruleBlackListHandle.inc(m_);
+                }
             }
-
             if (good){
                 for (auto const & l : log_)
                     logs->push_back(l);
