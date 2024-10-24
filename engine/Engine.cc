@@ -70,11 +70,12 @@ void Engine::forwardChaining() {
             auto newFacts = rule.checkPremise(_facts, varToConst);
 
             if (newFacts) {
-                addedNewFact = true;
                 for (auto const & newFact : *newFacts) {
 
                     if(std::find_if(_facts.begin(), _facts.end(), 
                     [&](Fact const & f) {return newFact == f;}) == _facts.end()) {
+
+                        addedNewFact = true;
 
                         addFact(newFact);
 
