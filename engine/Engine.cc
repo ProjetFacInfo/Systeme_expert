@@ -152,19 +152,28 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
 
 void Engine::backwardChaining() const
 {
-    std::vector<std::string> logs;
-    std::map<std::string, std::string> m;
-    std::map<std::string, std::string> test;
-    test["X"] = "constante1";
-    test["Y"] = "constante2";
+
     std::vector<std::map<std::string, std::string>> blacklist;
-    blacklist.push_back(test);
-    if(backwardChaining_(&logs, &m, blacklist, *GOAL)){
-        for (auto const & log: logs){
-            std::cout << log << std::endl;
+    bool run = true;
+
+    while(run){
+        std::vector<std::string> logs;
+        std::map<std::string, std::string> m;
+        
+        if(backwardChaining_(&logs, &m, blacklist, *GOAL)){
+            for (auto const & log: logs){
+                std::cout << log << std::endl;
+            }
+            for (auto const & m_ : m){
+                std::cout << m_.first << " " << m_.second << std::endl;
+            }
+            std::cout << "Continue(y/n)?";
+            std::string rsp;
+            std::cin >> rsp;
+            if (rsp != "y") return;
+            blacklist.push_back(m);
         }
+        else run = false;        
     }
-    for (auto const & m_ : m){
-        std::cout << m_.first << " " << m_.second << std::endl;
-    }
+    
 }
