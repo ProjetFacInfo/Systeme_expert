@@ -78,3 +78,12 @@ Fact Predicate::toFact() const
 {
     return Fact(_name,_parameters,_value);
 }
+
+std::list<std::string> Predicate::getVariables() const
+{
+	std::list<std::string> variables;
+	for (auto const & parameter : _parameters){
+		if (parameter.getType() == TypeParameter::VARIABLE) variables.push_back(parameter.getValue());
+	}
+    return variables;
+}

@@ -4,6 +4,8 @@
 #include <iostream>
 #include <memory>
 #include <algorithm>
+#include <stack>
+#include <list>
 
 #include "Fact.hh"
 #include "Rule.hh"
@@ -28,6 +30,6 @@ public:
     void run();
 
     void forwardChaining();
-    bool backwardChaining_(std::vector<std::string> *logs, std::map<std::string, std::string> *m, std::map<std::string, std::vector<std::string>> const & blacklist, Predicate const &goal) const ;
+    bool backwardChaining_(std::vector<std::string> *logs, std::map<std::string, std::string> *m, std::vector<std::map<std::string, std::string>> const & blacklist, Predicate const &goal) const ;
     void backwardChaining() const;
 };

@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <list>
 
 #include "Parameter.hh"
 #include "Fact.hh"
@@ -26,6 +27,7 @@ class Predicate {
 		Predicate toNewPredicate(std::map<std::string, std::string> const & varToConst) const;
 		bool isFact() const;
 		Fact toFact() const;
+		std::list<std::string> getVariables() const;
 
 
 		std::vector<Parameter> getParameters() const {return _parameters;}

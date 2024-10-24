@@ -26,5 +26,6 @@ class Rule {
 		std::shared_ptr<std::vector<Predicate>> checkConsequent(Predicate const & predicate, std::map<std::string, std::string> * m) const;
 
 		Predicate const & getConsequent() const{return _consequent;}
+		std::vector<Predicate> const & getPremises() const{return _premises;}
 
 };
