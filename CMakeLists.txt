@@ -22,6 +22,7 @@ file(GLOB MODEL
 
 file(GLOB ENGINE
     engine/Engine.cc
+    engine/RuleBlackListHandle.cc
 )
 
 BISON_TARGET(parser parser/parser.yy ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp VERBOSE ${CMAKE_CURRENT_BINARY_DIR}/automate.txt)

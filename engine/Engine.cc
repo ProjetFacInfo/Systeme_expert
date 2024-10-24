@@ -65,9 +65,8 @@ void Engine::forwardChaining() {
     while (addedNewFact) {
         addedNewFact = false;
         for (auto const &rule : _rules) {
-            std::map<std::string, std::string> varToConst;
 
-            auto newFacts = rule.checkPremise(_facts, varToConst);
+            auto newFacts = rule.checkPremise(_facts);
 
             if (newFacts) {
                 for (auto const & newFact : *newFacts) {
@@ -81,124 +80,12 @@ void Engine::forwardChaining() {
 
                         std::cout << "New fact inferred: " << newFact.toString() << std::endl;
 
-                        for (auto const & vtc : varToConst) {
-                            std::cout << vtc.first << " : " << vtc.second << "\t";
-                        }
-                        std::cout << std::endl;
                     }
                 }
             }
         }
     }
 
-}
-
-void insert(std::map<std::string,std::string>* m1, std::map<std::string,std::string> const & m2){
-    for (auto const & m: m2){
-        (*m1)[m.first] = m.second;
-    }
-}
-
-void updateValues(std::map<std::string,std::string>* m1, std::map<std::string,std::string> const & m2){
-    for (auto & m: *m1){
-        auto el = m2.find(m.second);
-        if (el != m2.end())
-            m.second = el->second;
-    }
-}
-
-void updateKeys(std::map<std::string,std::string>* m1, std::map<std::string,std::string> const & m2){
-    for (auto & m: *m1){
-        auto el = m2.find(m.first);
-        if (el != m2.end()){
-            auto node = m1->extract(m.first);
-            node.key() = el->first;
-            m1->insert(std::move(node));
-        }
-    }
-}
-
-void update(std::vector<std::map<std::string, std::string>> * blacklist, std::map<std::string,std::string> const & m){
-    for (auto & b : *blacklist) updateKeys(&b, m);
-}
-
-std::map<std::string, std::string> submap(std::map<std::string, std::string> const & m, std::list<std::string> const & keys){
-    std::map<std::string, std::string> subMap;
-    for (auto const & key: keys){
-        auto el = m.find(key);
-        if (el != m.end()) subMap[key] = el->second;
-    }
-    return subMap;
-}
-
-class RuleBlackListHandle {
-private:
-    std::vector<std::map<std::string, std::string>> _blacklist;
-    std::stack<std::vector<std::map<std::string, std::string>>> _currentBlackList;
-    std::list<std::list<std::string>> _variablesParameters;
-    std::list<std::list<std::string>>::iterator _current_it;
-public:
-    RuleBlackListHandle(Rule const & rule, std::vector<std::map<std::string, std::string>> const & blacklist, std::map<std::string, std::string> const & m)
-    :_blacklist(blacklist),_currentBlackList(){
-        std::list<std::string> variables;
-        for (auto const & premise : rule.getPremises()){
-            auto vars = premise.getVariables();
-            vars.erase(std::remove_if(vars.begin(),vars.end(),[&variables](std::string const & variable){
-                return (std::find(variables.begin(), variables.end(), variable) != variables.end());
-            }),vars.end());
-            for (auto const & var: vars) variables.push_back(var);
-            _variablesParameters.push_back(vars);
-        }
-        _current_it = _variablesParameters.begin();
-        update(&_blacklist,m);
-        _currentBlackList.push(std::vector<std::map<std::string, std::string>>());
-    }
-    bool check(std::map<std::string, std::string> const & m) const{
-        if (_blacklist.empty()) return true;
-        for (auto const & bl : _blacklist){
-            bool good = false;
-            for (auto const & el : bl){
-                auto it = m.find(el.first);
-                if (it == m.end() || it->second != el.second){
-                    good = true;
-                    break;
-                }
-            }
-            if (!good) return false;
-        }
-        return true;
-    }
-    std::vector<std::map<std::string,std::string>> getCurrentBlackList(){
-        return _currentBlackList.top();
-    }
-    void dec(std::map<std::string, std::string> * m){
-        for (auto const & variable: *_current_it) m->erase(variable); 
-        _current_it--;
-        _currentBlackList.pop();
-        for (auto const & variable: *_current_it) m->erase(variable); 
-    }
-    void inc(std::map<std::string, std::string> const & m){
-        std::map<std::string, std::string> subMap = submap(m,*_current_it);
-        _currentBlackList.top().push_back(subMap);
-        _current_it++;
-        _currentBlackList.push(std::vector<std::map<std::string, std::string>>());
-    }
-};
-
-bool check(std::vector<std::map<std::string, std::string>> const & blacklist, std::map<std::string, std::string> const & m){
-    if (blacklist.empty()) return true;
-    for (auto const & bl : blacklist){
-        bool good = false;
-        for (auto const & el : bl){
-            auto it = m.find(el.first);
-            if (it == m.end() || it->second != el.second){
-                good = true;
-                break;
-            }
-        }
-        if (!good) return false;
-    }
-    return true;
 }
 
 
@@ -220,18 +107,22 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
             std::vector<std::string> log_;
             std::map<std::string, std::string> m_;
 
-            RuleBlackListHandle ruleBlackListHandle(rule,blacklist,m2);
+            RuleBlackListHandle ruleBlackListHandle(rule.getPremises(),blacklist,m2);
 
             bool good = true;
             auto it = premises->begin();
             while (it != premises -> end()){
                 auto p = it->toNewPredicate(m_);
-                if (!backwardChaining_(&log_,&m_,ruleBlackListHandle.getCurrentBlackList(),p) || !ruleBlackListHandle.check(m_)) {
+                if (!backwardChaining_(&log_,&m_,ruleBlackListHandle.getCurrentBlackList(),p)) {
                     if (it == premises->begin()){
                         good = false;
                         break;
                     }
                     it--;
+                    ruleBlackListHandle.dec(&m_);
+                }
+                else if (!ruleBlackListHandle.check(m_)){
+                    ruleBlackListHandle.inc(m_);
                     ruleBlackListHandle.dec(&m_);
                 }
                 else {
@@ -263,7 +154,11 @@ void Engine::backwardChaining() const
 {
     std::vector<std::string> logs;
     std::map<std::string, std::string> m;
+    std::map<std::string, std::string> test;
+    test["X"] = "constante1";
+    test["Y"] = "constante2";
     std::vector<std::map<std::string, std::string>> blacklist;
+    blacklist.push_back(test);
     if(backwardChaining_(&logs, &m, blacklist, *GOAL)){
         for (auto const & log: logs){
             std::cout << log << std::endl;

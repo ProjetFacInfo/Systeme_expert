@@ -16,29 +16,63 @@ std::string Rule::toString() const {
 	return s;
 }
 
-std::shared_ptr<std::vector<Fact>> Rule::checkPremise(std::vector<Fact> const & facts, std::map<std::string, std::string> & varToConst) const
+std::shared_ptr<std::vector<Fact>> Rule::checkPremise(std::vector<Fact> const & facts) const
 {
-	std::map<std::string, std::string> m;
-	bool good = true;
-
-	for (auto const & premise : _premises){
-		good = false;
-		for (auto const & fact : facts){
-			if (premise.calc(fact, &m)){
-				good = true;
-				break;
-			}
-		}
-		if (!good) return nullptr;
-	}
-
-	varToConst = m;
 
 	std::vector<Fact> resFacts;
 
-	Predicate p = _consequent.toNewPredicate(m);
-	if (!p.isFact()) return nullptr;
-	resFacts.push_back(p.toFact());
+	std::vector<std::map<std::string, std::string>> blacklist;
+
+	bool addNewFacts;
+
+	do {
+		addNewFacts = false;
+
+		RuleBlackListHandle ruleBlackListHandle(_premises,blacklist,std::map<std::string, std::string>());
+		std::map<std::string, std::string> m;
+		bool good = true;
+		auto it = _premises.begin();
+		while (it != _premises.end()){
+
+			auto p = it->toNewPredicate(m);
+
+			bool ok = false;
+
+			for (auto const & fact: facts){
+				std::map<std::string, std::string> m_;
+				if(p.calc(fact, &m_) && check(ruleBlackListHandle.getCurrentBlackList(), m_)){
+					insert(&m,m_);
+					ok = true;
+					break;
+				}
+			}
+			if (!ok) {
+				if (it == _premises.begin()){
+					good = false;
+					break;
+				}
+				it--;
+				ruleBlackListHandle.dec(&m);
+			}
+			else if (!ruleBlackListHandle.check(m)){
+                ruleBlackListHandle.inc(m);
+                ruleBlackListHandle.dec(&m);
+            }
+			else {
+				it++;
+				ruleBlackListHandle.inc(m);
+			}
+		}
+		if (good){
+			
+			Predicate p = _consequent.toNewPredicate(m);
+			if (!p.isFact()) return nullptr;
+			resFacts.push_back(p.toFact());
+			addNewFacts = true;
+			blacklist.push_back(m);
+			
+		}
+	} while(addNewFacts);
 
     return std::make_shared<std::vector<Fact>>(resFacts);
 }

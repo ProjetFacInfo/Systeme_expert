@@ -9,6 +9,7 @@
 
 #include "Fact.hh"
 #include "Rule.hh"
+#include "RuleBlackListHandle.hh"
 
 enum class Strategy{
     FORWARD, BACKWARD
