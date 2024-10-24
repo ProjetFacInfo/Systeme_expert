@@ -22,7 +22,7 @@ class Rule {
 
 		std::string toString() const;
 
-		std::shared_ptr<std::vector<Fact>> checkPremise(std::vector<Fact> const & facts) const;
+		std::shared_ptr<std::vector<Fact>> checkPremise(std::vector<Fact> const & facts, std::map<std::string, std::string> & varToConst) const;
 		std::shared_ptr<std::vector<Predicate>> checkConsequent(Predicate const & predicate, std::map<std::string, std::string> * m) const;
 
 		Predicate const & getConsequent() const{return _consequent;}

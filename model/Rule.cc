@@ -16,7 +16,7 @@ std::string Rule::toString() const {
 	return s;
 }
 
-std::shared_ptr<std::vector<Fact>> Rule::checkPremise(std::vector<Fact> const &facts) const
+std::shared_ptr<std::vector<Fact>> Rule::checkPremise(std::vector<Fact> const & facts, std::map<std::string, std::string> & varToConst) const
 {
 	std::map<std::string, std::string> m;
 	bool good = true;
@@ -31,6 +31,8 @@ std::shared_ptr<std::vector<Fact>> Rule::checkPremise(std::vector<Fact> const &f
 		}
 		if (!good) return nullptr;
 	}
+
+	varToConst = m;
 
 	std::vector<Fact> resFacts;
 

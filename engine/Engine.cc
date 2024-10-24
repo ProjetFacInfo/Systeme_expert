@@ -59,9 +59,37 @@ void Engine::run()
     }
 }
 
-void Engine::forwardChaining()
-{
-    
+void Engine::forwardChaining() {
+    bool addedNewFact = true;
+
+    while (addedNewFact) {
+        addedNewFact = false;
+        for (auto const &rule : _rules) {
+            std::map<std::string, std::string> varToConst;
+
+            auto newFacts = rule.checkPremise(_facts, varToConst);
+
+            if (newFacts) {
+                addedNewFact = true;
+                for (auto const & newFact : *newFacts) {
+
+                    if(std::find_if(_facts.begin(), _facts.end(), 
+                    [&](Fact const & f) {return newFact == f;}) == _facts.end()) {
+
+                        addFact(newFact);
+
+                        std::cout << "New fact inferred: " << newFact.toString() << std::endl;
+
+                        for (auto const & vtc : varToConst) {
+                            std::cout << vtc.first << " : " << vtc.second << "\t";
+                        }
+                        std::cout << std::endl;
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 void insert(std::map<std::string,std::string>* m1, std::map<std::string,std::string> const & m2){
