@@ -100,14 +100,17 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
         }
     }
     for (auto const & rule : _rules){
-        std::map<std::string, std::string> m2;
+        std::map<std::string, std::list<std::string>> m2;
         auto premises = rule.checkConsequent(goal, &m2);
+
         if (premises){
 
             std::vector<std::string> log_;
             std::map<std::string, std::string> m_;
 
-            RuleBlackListHandle ruleBlackListHandle(rule.getPremises(),blacklist,m2);
+            std::map<std::string, std::string> m3;
+
+            RuleBlackListHandle ruleBlackListHandle(rule.getPremises(),blacklist,m2,m_,m3);
 
             bool good = true;
             auto it = premises->begin();
@@ -122,6 +125,7 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
                     ruleBlackListHandle.dec(&m_);
                 }
                 else if (!ruleBlackListHandle.check(m_)){
+                    
                     ruleBlackListHandle.inc(m_);
                     ruleBlackListHandle.dec(&m_);
                 }
@@ -141,8 +145,8 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
                 log+="-> ";
                 log+=rule.getConsequent().toNewPredicate(m_).toString();
                 logs->push_back(log);
-                updateValues(&m2,m_);
-                insert(m,m2);
+                updateValues(&m3,m_);
+                insert(m,m3);
                 return true;
             }
         }

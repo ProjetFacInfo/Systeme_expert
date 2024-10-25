@@ -5,6 +5,7 @@
 #include <map>
 #include <iostream>
 #include <list>
+#include <algorithm>
 
 #include "Parameter.hh"
 #include "Fact.hh"
@@ -22,7 +23,7 @@ class Predicate {
 
 		std::string toString() const;
 
-		bool calc(Predicate const & predicate, std::map<std::string, std::string> * p1top2, std::map<std::string, std::string> * p2top1) const;
+		bool calc(Predicate const & predicate, std::map<std::string, std::list<std::string>> * p1top2, std::map<std::string, std::string> * p2top1) const;
 		bool calc(Fact const & fact, std::map<std::string, std::string> * varToConst) const;
 		Predicate toNewPredicate(std::map<std::string, std::string> const & varToConst) const;
 		bool isFact() const;

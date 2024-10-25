@@ -4,6 +4,7 @@ a(constante1, constante3)
 p(constante1, constante4)
 p(constante1, constante2)
 p(constante2, constante4)
+p(constante1, constante1)
 k(constante3)
 
 r1 a(X,Y) ET p(Y) -> ok(X,Y)
@@ -11,4 +12,4 @@ r1 f(X) ET p(X, Y) -> a(X,Y)
 r2 r(G) ET f(M) -> ok4(G,M)
 r3 ok(X,Y) -> ok2(X,Y)
 
-r4 f(X) ET p(X, Y) -> ok4(X, Y)
+r4 f(X) ET p(X, Y) -> ok4(X, Y) ET ok5(Y, X)

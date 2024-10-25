@@ -18,7 +18,7 @@ private:
     std::list<std::list<std::string>>::iterator _current_it;
 public:
 
-    RuleBlackListHandle(std::vector<Predicate> const & premisses, std::vector<std::map<std::string, std::string>> const & blacklist, std::map<std::string, std::string> const & m);
+    RuleBlackListHandle(std::vector<Predicate> const & premisses, std::vector<std::map<std::string, std::string>> const & blacklist, std::map<std::string, std::list<std::string>> const & m, std::map<std::string, std::string> & m_, std::map<std::string, std::string> & m3);
 
     bool check(std::map<std::string, std::string> const & m) const;
 

@@ -25,10 +25,13 @@ std::shared_ptr<std::vector<Fact>> Rule::checkPremise(std::vector<Fact> const & 
 
 	bool addNewFacts;
 
+	std::map<std::string, std::string> m_m;
+	std::map<std::string, std::string> m_m2;
+
 	do {
 		addNewFacts = false;
 
-		RuleBlackListHandle ruleBlackListHandle(_premises,blacklist,std::map<std::string, std::string>());
+		RuleBlackListHandle ruleBlackListHandle(_premises,blacklist,std::map<std::string, std::list<std::string>>(), m_m , m_m2);
 		std::map<std::string, std::string> m;
 		bool good = true;
 		auto it = _premises.begin();
@@ -77,11 +80,20 @@ std::shared_ptr<std::vector<Fact>> Rule::checkPremise(std::vector<Fact> const & 
     return std::make_shared<std::vector<Fact>>(resFacts);
 }
 
-std::shared_ptr<std::vector<Predicate>> Rule::checkConsequent(Predicate const &predicate, std::map<std::string, std::string> * m) const
+std::shared_ptr<std::vector<Predicate>> Rule::checkConsequent(Predicate const &predicate, std::map<std::string, std::list<std::string>> * m) const
 {
 	std::map<std::string, std::string> m2;
 
 	if (!_consequent.calc(predicate, m, &m2)) return nullptr;
+
+	/*
+	for (auto const & el:*m){
+		std::cout << el.first << " [";
+		for (auto const & s:el.second) std::cout << s << " ";
+		std::cout << "]" << std::endl;
+	} 
+	*/
+
 
 	std::vector<Predicate> predicates;
 	for (auto const & premise : _premises){
