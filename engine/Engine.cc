@@ -95,7 +95,7 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
         std::map<std::string, std::string> m_;
         if(goal.calc(fact, &m_) && check(blacklist, m_)){
             logs->push_back(fact.toString());
-            insert(m,m_);
+            insert(*m,m_);
             return true;
         }
     }
@@ -146,7 +146,7 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
                 log+=rule.getConsequent().toNewPredicate(m_).toString();
                 logs->push_back(log);
                 updateValues(&m3,m_);
-                insert(m,m3);
+                insert(*m,m3);
                 return true;
             }
         }

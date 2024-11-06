@@ -1,0 +1,5 @@
+p(constante1, constante4)
+p(constante1, constante1)
+f(constante1)
+
+r6 f(X) ET p(X, Y) -> a(X,Y)

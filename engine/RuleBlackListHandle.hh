@@ -32,6 +32,6 @@ public:
 
 bool check(std::vector<std::map<std::string, std::string>> const & blacklist, std::map<std::string, std::string> const & m);
 
-void insert(std::map<std::string,std::string>* m1, std::map<std::string,std::string> const & m2);
+void insert(std::map<std::string,std::string>& m1, std::map<std::string,std::string> const & m2);
 
 void updateValues(std::map<std::string,std::string>* m1, std::map<std::string,std::string> const & m2);

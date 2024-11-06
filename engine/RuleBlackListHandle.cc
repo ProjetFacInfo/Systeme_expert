@@ -1,8 +1,8 @@
 #include "RuleBlackListHandle.hh"
 
-void insert(std::map<std::string,std::string>* m1, std::map<std::string,std::string> const & m2){
+void insert(std::map<std::string,std::string>& m1, std::map<std::string,std::string> const & m2){
     for (auto const & m: m2){
-        (*m1)[m.first] = m.second;
+        m1[m.first] = m.second;
     }
 }
 
@@ -105,13 +105,16 @@ void update(std::vector<std::map<std::string, std::string>> & blacklist, std::ma
 
     }
 
-    std::vector<std::map<std::string, std::string>> blacklist_;
+    if (!m3.empty()){
+        std::vector<std::map<std::string, std::string>> blacklist_;
     
-    for (auto & b : blacklist){
-        if (updateKeys(b, m3)) blacklist_.push_back(b);
-    } 
+        for (auto & b : blacklist){
+            if (updateKeys(b, m3)) blacklist_.push_back(b);
+        } 
 
-    blacklist = blacklist_;
+        blacklist = blacklist_;
+    }
+    
 }
 
 std::map<std::string, std::string> submap(std::map<std::string, std::string> const & m, std::list<std::string> const & keys){
@@ -154,7 +157,7 @@ RuleBlackListHandle::RuleBlackListHandle(std::vector<Predicate> const & premisse
 bool RuleBlackListHandle::check(std::map<std::string, std::string> const & m) const{
     if (_blacklist.empty()) return true;
     for (auto const & bl : _blacklist){
-        bool good = false;
+        bool good = (bl.empty() ? true : false);
         for (auto const & el : bl){
             auto it = m.find(el.first);
             if (it == m.end() || it->second != el.second){

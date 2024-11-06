@@ -25,14 +25,14 @@ std::shared_ptr<std::vector<Fact>> Rule::checkPremise(std::vector<Fact> const & 
 
 	bool addNewFacts;
 
-	std::map<std::string, std::string> m_m;
 	std::map<std::string, std::string> m_m2;
 
 	do {
 		addNewFacts = false;
 
-		RuleBlackListHandle ruleBlackListHandle(_premises,blacklist,std::map<std::string, std::list<std::string>>(), m_m , m_m2);
 		std::map<std::string, std::string> m;
+		RuleBlackListHandle ruleBlackListHandle(_premises,blacklist,std::map<std::string, std::list<std::string>>(), m , m_m2);
+
 		bool good = true;
 		auto it = _premises.begin();
 		while (it != _premises.end()){
@@ -43,10 +43,14 @@ std::shared_ptr<std::vector<Fact>> Rule::checkPremise(std::vector<Fact> const & 
 
 			for (auto const & fact: facts){
 				std::map<std::string, std::string> m_;
-				if(p.calc(fact, &m_) && check(ruleBlackListHandle.getCurrentBlackList(), m_)){
-					insert(&m,m_);
-					ok = true;
-					break;
+				if(p.calc(fact, &m_)){
+					std::map<std::string, std::string> tempMap(m);
+					insert(tempMap, m_);
+					if (check(ruleBlackListHandle.getCurrentBlackList(), tempMap)){
+						m = tempMap;
+						ok = true;
+						break;
+					}
 				}
 			}
 			if (!ok) {
