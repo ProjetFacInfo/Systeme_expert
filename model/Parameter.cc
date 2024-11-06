@@ -8,6 +8,7 @@ bool Parameter::operator==(Parameter const &parameter) const
 std::string Parameter::toString() const
 {
     std::string msg;
+    /*
     switch (_type)
     {
     case TypeParameter::CONSTANT:
@@ -19,6 +20,7 @@ std::string Parameter::toString() const
     default:
         break;
     }
+    */
     msg += _value;
     return msg;
 }

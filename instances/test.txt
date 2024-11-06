@@ -9,6 +9,7 @@ p(constante2, constante4)
 p(constante1, constante1)
 p(constante3, constante10)
 k(constante3)
+z(constante2)
 
 r1 a(X,Y) ET p(Y) -> ok(X,Y)
 r6 f(X) ET p(X, Y) -> a(X,Y)

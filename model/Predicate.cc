@@ -2,18 +2,20 @@
 
 
 std::string Predicate::toString() const {
-	std::string s =  "Predicate name : " + _name + "\n";
+	std::string s;
+
+	s += _value ? "" : "NON";
 		
-	s += "parameter : \n "; 
+	s += _name + "("; 
 
-	for ( auto const & v : _parameters ) {
-		s += v.toString();
+	auto it = _parameters.end()-1;
+
+	while(it != _parameters.begin()){
+		s+= (it->toString()+",");
+		it--;
 	}
-	s += "\n";
 
-	s += "value : "; 
-
-	s += _value ? "true\n" : "false\n";
+	s+= (it->toString()+")");
 
 	return s;
 }

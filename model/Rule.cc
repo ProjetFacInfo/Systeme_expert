@@ -1,17 +1,34 @@
 #include "Rule.hh"
 
 std::string Rule::toString() const {
-	std::string s = "Rule name : " + _name  + "\n";
+	std::string s(_name+" ");
 
-	s += "premise : \n";
-	for (auto const & p : _premises) {
-		s += p.toString();
+	auto it = _premises.end()-1;
+
+	while (it != _premises.begin()){
+		s += it->toString()+" ET ";
+		it--;
 	}
-	s += "\n";
 
-	s += "consequent : \n";
+	s += it->toString()+" -> ";
 	s += _consequent.toString();
-	s += "\n";
+
+	return s;
+}
+
+std::string Rule::toString(std::map<std::string, std::string> const &m) const
+{
+	std::string s(_name+" ");
+
+	auto it = _premises.end()-1;
+
+	while (it != _premises.begin()){
+		s += it->toNewPredicate(m).toString()+" ET ";
+		it--;
+	}
+
+	s += it->toNewPredicate(m).toString()+" -> ";
+	s += _consequent.toNewPredicate(m).toString();
 
 	return s;
 }

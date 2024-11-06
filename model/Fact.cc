@@ -7,10 +7,20 @@ bool Fact::operator==(Fact const &fact) const
 
 std::string Fact::toString() const
 {
-    std::string msg = "Fact: "+_name+" \n";
-    for (auto const & p : _parameters){
-        msg+="( " + p.toString() + " )\n";
+    std::string msg;
+
+    msg += _value ? "" : "NON ";
+
+    msg += _name+"(";
+
+    auto it = _parameters.end()-1;
+
+    while (it != _parameters.begin()){
+        msg+=it->toString()+",";
+        it--;
     }
-    msg += _value ? "true" : "false";
+
+    msg+=it->toString()+")";
+    
     return msg;
 }
