@@ -1,6 +1,7 @@
 #include "Engine.hh"
 
 Strategy Engine::STRATEGY = Strategy::FORWARD;
+bool Engine::TRACE = true;
 std::unique_ptr<Predicate> Engine::GOAL = nullptr;
 
 std::vector<std::string> split(std::string s, const std::string& delimiter) {
@@ -78,7 +79,7 @@ void Engine::forwardChaining() {
 
                         addFact(newFact);
 
-                        std::cout << "New fact inferred: " << newFact.toString() << std::endl;
+                        if (Engine::TRACE) std::cout << "New fact inferred: " << newFact.toString() << std::endl;
 
                     }
                 }
@@ -158,19 +159,30 @@ void Engine::backwardChaining() const
         std::map<std::string, std::string> m;
         
         if(backwardChaining_(&logs, &m, blacklist, *GOAL)){
-            for (auto const & log: logs){
-                std::cout << log << std::endl;
-            }
+
+            std::cout << "True" << std::endl;
+
+            if (Engine::TRACE)
+                for (auto const & log: logs) std::cout << log << std::endl;
+
             for (auto const & m_ : m){
                 std::cout << m_.first << " " << m_.second << std::endl;
             }
-            std::cout << "Continue(y/n)?";
+
+            std::cout << "Continue(y/n)? ";
             std::string rsp;
             std::cin >> rsp;
             if (rsp != "y") return;
+            std::cout << std::endl;
             blacklist.push_back(m);
+
         }
-        else run = false;        
+        else{
+
+            std::cout << "False" << std::endl;
+            run = false;
+
+        }
     }
     
 }
