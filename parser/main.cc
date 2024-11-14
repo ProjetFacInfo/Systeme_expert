@@ -18,7 +18,7 @@ int main( int  argc, char* argv[]) {
 
     int opt;
 
-    while((opt = getopt(argc, argv, "f:g:")) != -1){
+    while((opt = getopt(argc, argv, "tf:g:")) != -1){
         switch (opt)
         {
             case 'f':
@@ -30,6 +30,11 @@ int main( int  argc, char* argv[]) {
             {
                 Engine::STRATEGY = Strategy::BACKWARD;
                 Engine::setGoal(optarg);
+                break;
+            }
+            case 't':
+            {
+                Engine::TRACE = true;
                 break;
             }
             default:

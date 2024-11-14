@@ -1,7 +1,7 @@
 #include "Engine.hh"
 
 Strategy Engine::STRATEGY = Strategy::FORWARD;
-bool Engine::TRACE = true;
+bool Engine::TRACE = false;
 std::unique_ptr<Predicate> Engine::GOAL = nullptr;
 
 std::vector<std::string> split(std::string s, const std::string& delimiter) {
@@ -129,6 +129,7 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
                     
                     ruleBlackListHandle.inc(m_);
                     ruleBlackListHandle.dec(&m_);
+                    log_.pop_back();
                 }
                 else {
                     it++;
@@ -138,13 +139,14 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
             if (good){
                 for (auto const & l : log_)
                     logs->push_back(l);
-                logs->push_back(rule.toString(m_));
                 updateValues(&m3,m_);
                 insert(*m,m3);
+                logs->push_back(rule.toString(*m));
                 return true;
             }
         }
     }
+    logs->clear();
     return false;
 }
 
@@ -160,14 +162,18 @@ void Engine::backwardChaining() const
         
         if(backwardChaining_(&logs, &m, blacklist, *GOAL)){
 
-            std::cout << "True" << std::endl;
+            std::cout << "True\n" << std::endl;
 
-            if (Engine::TRACE)
+            if (Engine::TRACE){
                 for (auto const & log: logs) std::cout << log << std::endl;
+                std::cout << std::endl;
+            }            
 
             for (auto const & m_ : m){
                 std::cout << m_.first << " " << m_.second << std::endl;
             }
+
+            std::cout << std::endl;
 
             std::cout << "Continue(y/n)? ";
             std::string rsp;

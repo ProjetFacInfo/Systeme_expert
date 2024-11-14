@@ -11,8 +11,8 @@ p(constante3, constante10)
 k(constante3)
 z(constante2)
 
-r1 a(X,Y) ET p(Y) -> ok(X,Y)
-r6 f(X) ET p(X, Y) -> a(X,Y)
+r1 a(X,Y) ET p(Y) -> ok(X, Y)
+r6 f(X) ET p(X, Y) ET p(Y) -> a(X,Y)
 r2 r(G) ET f(M) -> ok4(G,M)
 r3 ok(X,Y) -> ok2(X,Y)
 
