@@ -70,6 +70,8 @@ void Engine::forwardChaining() {
             auto newFacts = rule.checkPremise(_facts);
 
             if (newFacts) {
+
+                bool logRule = false;
                 for (auto const & newFact : *newFacts) {
 
                     if(std::find_if(_facts.begin(), _facts.end(), 
@@ -78,6 +80,11 @@ void Engine::forwardChaining() {
                         addedNewFact = true;
 
                         addFact(newFact);
+
+                        if (Engine::TRACE && !logRule){
+                            std::cout << "Rule used: " << rule.toString() << std::endl;
+                            logRule = true;
+                        }
 
                         if (Engine::TRACE) std::cout << "New fact inferred: " << newFact.toString() << std::endl;
 
