@@ -15,10 +15,15 @@ enum class Strategy{
     FORWARD, BACKWARD
 };
 
+enum class RuleChoice{
+    DEFAULT, NB_PREMISES_DESC
+};
+
 class Engine{
 public:
     static Strategy STRATEGY;
     static bool TRACE;
+    static RuleChoice RULE_CHOICE;
     static std::unique_ptr<Predicate> GOAL;
     static void setGoal(std::string goal);
 private:
@@ -34,4 +39,7 @@ public:
     void forwardChaining();
     bool backwardChaining_(std::vector<std::string> *logs, std::map<std::string, std::string> *m, std::vector<std::map<std::string, std::string>> const & blacklist, Predicate const &goal) const ;
     void backwardChaining() const;
+
+
+    void sortRulesByNbPremisesDesc();
 };

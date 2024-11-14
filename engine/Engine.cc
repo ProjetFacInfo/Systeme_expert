@@ -2,6 +2,7 @@
 
 Strategy Engine::STRATEGY = Strategy::FORWARD;
 bool Engine::TRACE = false;
+RuleChoice Engine::RULE_CHOICE = RuleChoice::NB_PREMISES_DESC;
 std::unique_ptr<Predicate> Engine::GOAL = nullptr;
 
 std::vector<std::string> split(std::string s, const std::string& delimiter) {
@@ -47,6 +48,7 @@ void Engine::setGoal(std::string goal)
 
 void Engine::run()
 {
+    if (RULE_CHOICE == RuleChoice::NB_PREMISES_DESC) sortRulesByNbPremisesDesc();
     switch (Engine::STRATEGY)
     {
     case Strategy::FORWARD:
@@ -198,4 +200,11 @@ void Engine::backwardChaining() const
         }
     }
     
+}
+
+void Engine::sortRulesByNbPremisesDesc()
+{
+    std::sort (_rules.begin(), _rules.end(), [](Rule r1, Rule r2){
+        return r1.getPremises().size() > r2.getPremises().size();
+    });
 }
