@@ -86,7 +86,7 @@ void Engine::forwardChaining() {
                             logRule = true;
                         }
 
-                        if (Engine::TRACE) std::cout << "New fact inferred: " << newFact.toString() << std::endl;
+                        std::cout << "New fact inferred: " << newFact.toString() << std::endl;
 
                     }
                 }
