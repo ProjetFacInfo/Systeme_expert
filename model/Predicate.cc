@@ -62,6 +62,7 @@ bool Predicate::calc(Predicate const & predicate, std::map<std::string, std::lis
 				auto it2 = p1top2->find(*it);
 				if (it2 != p1top2->end() && (it2->second.front()[0] > 90 || it2->second.front()[0] < 65) && it2->second.front() != val) return false;
 				(*p2top1)[*it] = val;
+				it++;
 			}
 		}
 	}

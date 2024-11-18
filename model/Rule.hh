@@ -25,7 +25,7 @@ class Rule {
 		std::string toString(std::map<std::string, std::string> const & m) const;
 
 		std::shared_ptr<std::vector<Fact>> checkPremise(std::vector<Fact> const & facts) const;
-		std::shared_ptr<std::vector<Predicate>> checkConsequent(Predicate const & predicate, std::map<std::string, std::list<std::string>> * m) const;
+		std::shared_ptr<std::vector<Predicate>> checkConsequent(Predicate const & predicate, std::map<std::string, std::list<std::string>> * m, std::vector<std::map<std::string,std::string>> const & blacklist, std::map<std::string, std::string> & mLog, std::map<std::string, std::string> &m2) const;
 
 		Predicate const & getConsequent() const{return _consequent;}
 		std::vector<Predicate> const & getPremises() const{return _premises;}

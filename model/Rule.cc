@@ -21,7 +21,6 @@ std::string Rule::toString(std::map<std::string, std::string> const &m) const
 	std::string s(_name+" ");
 
 	auto it = _premises.end()-1;
-
 	while (it != _premises.begin()){
 		s += it->toNewPredicate(m).toString()+" ET ";
 		it--;
@@ -101,10 +100,8 @@ std::shared_ptr<std::vector<Fact>> Rule::checkPremise(std::vector<Fact> const & 
     return std::make_shared<std::vector<Fact>>(resFacts);
 }
 
-std::shared_ptr<std::vector<Predicate>> Rule::checkConsequent(Predicate const &predicate, std::map<std::string, std::list<std::string>> * m) const
+std::shared_ptr<std::vector<Predicate>> Rule::checkConsequent(Predicate const &predicate, std::map<std::string, std::list<std::string>> * m, std::vector<std::map<std::string,std::string>> const & blacklist, std::map<std::string,std::string> &mLog, std::map<std::string, std::string> &m2) const
 {
-	std::map<std::string, std::string> m2;
-
 	if (!_consequent.calc(predicate, m, &m2)) return nullptr;
 
 	/*
@@ -115,6 +112,44 @@ std::shared_ptr<std::vector<Predicate>> Rule::checkConsequent(Predicate const &p
 	} 
 	*/
 
+	auto newConsequent = _consequent.toNewPredicate(m2);
+
+	auto par1 = predicate.getParameters();
+	auto par2 = newConsequent.getParameters();
+
+	for (auto const & b: blacklist){
+
+		auto it1 = par1.begin();
+		auto it2 = par2.begin();
+		bool good = false;
+
+		while (it1 != par1.end()){
+
+			if (it1->getType()==TypeParameter::VARIABLE){
+				if (b.at(it1->getValue()) != it2->getValue()){
+					good = true;
+					break;
+				}
+			}
+			it1++;
+			it2++;
+			
+		}
+
+		if (!good) return nullptr;
+	}
+
+	auto it1 = par1.begin();
+	auto it2 = par2.begin();
+	while (it1 != par1.end()){
+		if (it1->getType()==TypeParameter::VARIABLE && it2->getType()==TypeParameter::CONSTANT){
+			auto key = it1->getValue();
+			auto value = it2->getValue();
+			mLog[key] = value;
+		}
+		it1++;
+		it2++;
+	}
 
 	std::vector<Predicate> predicates;
 	for (auto const & premise : _premises){

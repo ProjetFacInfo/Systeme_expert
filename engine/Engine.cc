@@ -19,6 +19,26 @@ std::vector<std::string> split(std::string s, const std::string& delimiter) {
     return tokens;
 }
 
+std::vector<std::map<std::string,std::string>> updateBlacklist(std::vector<std::map<std::string,std::string>> const & blacklist, std::map<std::string, std::string> const & m){
+    std::vector<std::map<std::string,std::string>> blacklist_;
+    for (auto const & b : blacklist){
+        std::map<std::string, std::string> b_(b);
+        auto good = true;
+        for (auto const & el : b){
+            auto it = m.find(el.first);
+            if (it != m.end()) {
+                if (it->second == el.second) b_.erase(el.first);
+                else {
+                    good = false;
+                    break;
+                }
+            }
+        }
+        if (good) blacklist_.push_back(b_);
+    }
+    return blacklist_;
+}
+
 void Engine::setGoal(std::string goal)
 {
 
@@ -89,6 +109,7 @@ void Engine::forwardChaining() {
                         }
 
                         std::cout << "New fact inferred: " << newFact.toString() << std::endl;
+                        std::cout << std::endl;
 
                     }
                 }
@@ -111,7 +132,10 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
     }
     for (auto const & rule : _rules){
         std::map<std::string, std::list<std::string>> m2;
-        auto premises = rule.checkConsequent(goal, &m2);
+        std::map<std::string, std::string> mLog;
+        std::map<std::string, std::string> m_log;
+
+        auto premises = rule.checkConsequent(goal, &m2, blacklist, mLog, m_log);
 
         if (premises){
 
@@ -120,12 +144,15 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
 
             std::map<std::string, std::string> m3;
 
-            RuleBlackListHandle ruleBlackListHandle(rule.getPremises(),blacklist,m2,m_,m3);
+            auto blacklistUpdate = updateBlacklist(blacklist, mLog);
+
+            RuleBlackListHandle ruleBlackListHandle(rule.getPremises(),blacklistUpdate,m2,m_,m3);
 
             bool good = true;
             auto it = premises->begin();
             while (it != premises -> end()){
                 auto p = it->toNewPredicate(m_);
+
                 if (!backwardChaining_(&log_,&m_,ruleBlackListHandle.getCurrentBlackList(),p)) {
                     if (it == premises->begin()){
                         good = false;
@@ -135,7 +162,6 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
                     ruleBlackListHandle.dec(&m_);
                 }
                 else if (!ruleBlackListHandle.check(m_)){
-                    
                     ruleBlackListHandle.inc(m_);
                     ruleBlackListHandle.dec(&m_);
                     log_.pop_back();
@@ -148,9 +174,14 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
             if (good){
                 for (auto const & l : log_)
                     logs->push_back(l);
+                insert(m_log, m_);
+                logs->push_back(rule.toString(m_log));
+                insert(mLog, m_);
                 updateValues(&m3,m_);
                 insert(*m,m3);
-                logs->push_back(rule.toString(*m));
+                insert(mLog,*m);
+                *m = mLog;
+                *m = updateMap(*m);
                 return true;
             }
         }
@@ -178,18 +209,21 @@ void Engine::backwardChaining() const
                 std::cout << std::endl;
             }            
 
-            for (auto const & m_ : m){
-                std::cout << m_.first << " " << m_.second << std::endl;
+            if (!m.empty()){
+                for (auto const & m_ : m){
+                    std::cout << m_.first << " " << m_.second << std::endl;
+                }
+
+                std::cout << std::endl;
+
+                std::cout << "Continue(y/n)? ";
+                std::string rsp;
+                std::cin >> rsp;
+                if (rsp != "y") return;
+                std::cout << std::endl;
+                blacklist.push_back(m);
             }
-
-            std::cout << std::endl;
-
-            std::cout << "Continue(y/n)? ";
-            std::string rsp;
-            std::cin >> rsp;
-            if (rsp != "y") return;
-            std::cout << std::endl;
-            blacklist.push_back(m);
+            else run = false;
 
         }
         else{

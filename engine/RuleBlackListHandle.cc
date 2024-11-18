@@ -1,5 +1,22 @@
 #include "RuleBlackListHandle.hh"
 
+std::map<std::string, std::string> updateMap(std::map<std::string, std::string> const & m){
+
+    std::map<std::string, std::string> m2;
+
+    for (auto const & el : m){
+		auto it = m.find(el.first);
+		auto it2 = m.find(it->second);
+		while (it2 != m.end()){
+			it = it2;
+			it2 = m.find(it->second);
+		}
+		m2[el.first] = it->second;
+	}
+
+    return m2;
+}
+
 void insert(std::map<std::string,std::string>& m1, std::map<std::string,std::string> const & m2){
     for (auto const & m: m2){
         m1[m.first] = m.second;
@@ -47,7 +64,7 @@ bool updateKeys(std::map<std::string,std::string>& m1, std::map<std::string, std
         for (auto const & el2:el.second){
             if (m1.operator[](el2) != val) return false;
         }
-        m2[el.first] = val;
+        if (el.first[0] >= 65 && el.first[0] <= 90) m2[el.first] = val;
     }
 
     m1 = m2;
@@ -101,7 +118,7 @@ void update(std::vector<std::map<std::string, std::string>> & blacklist, std::ma
             it = m.find(val);
         }
 
-        m3[m_.first] = val;
+        if (m_.first[0] <= 90 && m_.first[0] >= 65) m3[m_.first] = val;
 
     }
 
@@ -126,10 +143,26 @@ std::map<std::string, std::string> submap(std::map<std::string, std::string> con
     return subMap;
 }
 
+std::vector<std::map<std::string,std::string>> FilterRaw(std::vector<std::map<std::string,std::string>> vec) {
+    std::vector<std::map<std::string,std::string>> out;
+    for (auto const & m : vec){
+        std::map<std::string,std::string> m_;
+        for (auto const & el:m){
+            if (el.second != ""){
+                m_[el.first] = el.second;
+            }
+        }
+        if (!m_.empty()) out.push_back(m_);
+    }
+    return out;
+}
+
 RuleBlackListHandle::RuleBlackListHandle(std::vector<Predicate> const & premisses, std::vector<std::map<std::string, std::string>> const & blacklist, std::map<std::string, std::list<std::string>> const & m, std::map<std::string, std::string> & m_, std::map<std::string, std::string> & m3)
     :_blacklist(blacklist),_currentBlackList(){
 
     update(_blacklist,m,m_,m3);
+
+    _blacklist = FilterRaw(_blacklist);
 
     std::list<std::string> variables;
         
@@ -155,6 +188,12 @@ RuleBlackListHandle::RuleBlackListHandle(std::vector<Predicate> const & premisse
 }
 
 bool RuleBlackListHandle::check(std::map<std::string, std::string> const & m) const{
+
+    /*
+    for (auto const & el:m) std::cout << el.first << " " << el.second << std::endl;
+    std::cout << std::endl;
+    */
+
     if (_blacklist.empty()) return true;
     for (auto const & bl : _blacklist){
         bool good = (bl.empty() ? true : false);
@@ -177,7 +216,8 @@ void RuleBlackListHandle::dec(std::map<std::string, std::string> * m){
     for (auto const & variable: *_current_it) m->erase(variable); 
 }
 
-void RuleBlackListHandle::inc(std::map<std::string, std::string> const & m){
+void RuleBlackListHandle::inc(std::map<std::string, std::string> m){
+    m = updateMap(m);
     std::map<std::string, std::string> subMap = submap(m,*_current_it);
     _currentBlackList.top().push_back(subMap);
     _current_it++;
