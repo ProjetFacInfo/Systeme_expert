@@ -1,0 +1,28 @@
+symptome(patient1, fievre)
+symptome(patient1, toux)
+symptome(patient2, fatigue)
+symptome(patient3, douleurs_articulaires)
+symptome(patient3, fievre)
+
+antecedent(patient1, asthme)
+antecedent(patient2, diabete)
+antecedent(patient3, hypertension)
+
+examen(patient1, saturation_oxygene_basse)
+examen(patient2, glycemie_elevee)
+examen(patient3, pression_elevee)
+
+traitement(patient1, antibiotique)
+traitement(patient2, insuline)
+
+
+r1 symptome(X, fievre) ET symptome(X, toux) -> diagnostique(X, grippe)
+r2 symptome(X, fatigue) ET examen(X, glycemie_elevee) -> diagnostique(X, diabete)
+r3 symptome(X, toux) ET antecedent(X, asthme) -> diagnostique(X, asthme_aggrave)
+r4 symptome(X, douleurs_articulaires) ET antecedent(X, hypertension) -> diagnostique(X, crise_hypertension)
+r5 diagnostique(X, grippe) -> traitement(X, antiviraux)
+r6 diagnostique(X, diabete) -> traitement(X, insuline)
+r7 diagnostique(X, asthme_aggrave) -> surveillance(X, saturation_oxygene)
+r8 diagnostique(X, crise_hypertension) -> referer(X, urgence)
+
+
