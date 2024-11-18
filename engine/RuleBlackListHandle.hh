@@ -37,13 +37,3 @@ void insert(std::map<std::string,std::string>& m1, std::map<std::string,std::str
 void updateValues(std::map<std::string,std::string>* m1, std::map<std::string,std::string> const & m2);
 
 std::map<std::string, std::string> updateMap(std::map<std::string, std::string> const & m);
-
-
-template <typename T, typename Pred>
-auto FilterRaw(const std::vector<T>& vec, Pred p) {
-    std::vector<T> out;
-    for (auto&& elem : vec)
-        if (p(elem))
-            out.push_back(elem);
-    return out;
-}
