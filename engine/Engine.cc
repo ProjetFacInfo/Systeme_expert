@@ -120,7 +120,7 @@ void Engine::forwardChaining() {
 }
 
 
-bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::string, std::string>* m, std::vector<std::map<std::string, std::string>> const & blacklist, Predicate const & goal) const
+bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::string, std::string>* m, std::vector<std::map<std::string, std::string>> const & blacklist, Predicate const & goal)
 {
     for (auto const & fact: _facts){
         std::map<std::string, std::string> m_;
@@ -130,6 +130,10 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
             return true;
         }
     }
+
+    if(std::find(_backwardBreakLoop.begin(), _backwardBreakLoop.end(), goal.toString()) != _backwardBreakLoop.end()) return false;
+    _backwardBreakLoop.push_back(goal.toString());
+
     for (auto const & rule : _rules){
         std::map<std::string, std::list<std::string>> m2;
         std::map<std::string, std::string> mLog;
@@ -182,15 +186,17 @@ bool Engine::backwardChaining_(std::vector<std::string>* logs, std::map<std::str
                 insert(mLog,*m);
                 *m = mLog;
                 *m = updateMap(*m);
+                _backwardBreakLoop.pop_back();
                 return true;
             }
         }
     }
     logs->clear();
+    _backwardBreakLoop.pop_back();
     return false;
 }
 
-void Engine::backwardChaining() const
+void Engine::backwardChaining()
 {
 
     std::vector<std::map<std::string, std::string>> blacklist;
