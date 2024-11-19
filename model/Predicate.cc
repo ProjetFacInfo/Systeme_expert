@@ -4,7 +4,7 @@
 std::string Predicate::toString() const {
 	std::string s;
 
-	s += _value ? "" : "NON";
+	s += _value ? "" : "NON ";
 		
 	s += _name + "("; 
 
