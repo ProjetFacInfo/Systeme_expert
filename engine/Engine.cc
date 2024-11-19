@@ -2,7 +2,7 @@
 
 Strategy Engine::STRATEGY = Strategy::FORWARD;
 bool Engine::TRACE = false;
-RuleChoice Engine::RULE_CHOICE = RuleChoice::NB_PREMISES_DESC;
+RuleChoice Engine::RULE_CHOICE = RuleChoice::DEFAULT;
 std::unique_ptr<Predicate> Engine::GOAL = nullptr;
 
 std::vector<std::string> split(std::string s, const std::string& delimiter) {
@@ -87,7 +87,12 @@ void Engine::forwardChaining() {
 
     while (addedNewFact) {
         addedNewFact = false;
-        for (auto const &rule : _rules) {
+
+        auto it = _rules.begin();
+
+        while (it != _rules.end()) {
+
+            auto const & rule = *it;
 
             auto newFacts = rule.checkPremise(_facts);
 
@@ -96,24 +101,35 @@ void Engine::forwardChaining() {
                 bool logRule = false;
                 for (auto const & newFact : *newFacts) {
 
-                    if(std::find_if(_facts.begin(), _facts.end(), 
-                    [&](Fact const & f) {return newFact == f;}) == _facts.end()) {
+                    if(std::find_if(_facts.begin(), _facts.end(), [&](Fact const & f) {return newFact == f;}) == _facts.end()) {
 
-                        addedNewFact = true;
+                        auto reverseNewFact = Fact(newFact.getName(),newFact.getParameters(),!newFact.getValue());
 
-                        addFact(newFact);
+                        if (std::find_if(_facts.begin(), _facts.end(), [&](Fact const & f) {return reverseNewFact == f;}) == _facts.end()){
 
-                        if (Engine::TRACE && !logRule){
-                            std::cout << "Rule used: " << rule.toString() << std::endl;
-                            logRule = true;
+                            addedNewFact = true;
+
+                            addFact(newFact);
+
+                            if (Engine::TRACE && !logRule){
+                                std::cout << "Rule used: " << rule.toString() << std::endl;
+                                logRule = true;
+                            }
+
+                            std::cout << "New fact inferred: " << newFact.toString() << std::endl;
+                            std::cout << std::endl;
+
                         }
-
-                        std::cout << "New fact inferred: " << newFact.toString() << std::endl;
-                        std::cout << std::endl;
-
                     }
                 }
             }
+
+            if (Engine::RULE_CHOICE == RuleChoice::RECENT_PREMISE && addedNewFact){
+                sortRecentPremises(rule.getConsequent().getValue(), rule.getConsequent().getName(), rule.getConsequent().getParameters().size());
+                break;
+            }
+
+            it++;
         }
     }
 
@@ -240,6 +256,29 @@ void Engine::backwardChaining()
         }
     }
     
+}
+
+void Engine::sortRecentPremises(bool value, std::string name, unsigned int nb_parameters)
+{
+    std::sort(_rules.begin(), _rules.end(), [&value, &name, &nb_parameters](Rule const & rule1, Rule const & rule2){
+        auto premises = rule1.getPremises();
+        bool y1 = false;
+        for (auto const & premise : premises){
+            if (premise.getValue() == value && premise.getName() == name && premise.getParameters().size()==nb_parameters){
+                y1 = true;
+                break;
+            }
+        }
+        premises = rule2.getPremises();
+        bool y2 = false;
+        for (auto const & premise : premises){
+            if (premise.getValue() == value && premise.getName() == name && premise.getParameters().size()==nb_parameters){
+                y2 = true;
+                break;
+            }
+        }
+        return y1 && !y2;
+    });
 }
 
 void Engine::sortRulesByNbPremisesDesc()

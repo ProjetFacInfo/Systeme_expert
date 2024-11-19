@@ -16,7 +16,7 @@ enum class Strategy{
 };
 
 enum class RuleChoice{
-    DEFAULT, NB_PREMISES_DESC
+    DEFAULT, NB_PREMISES_DESC, RECENT_PREMISE
 };
 
 class Engine{
@@ -41,6 +41,8 @@ public:
     void forwardChaining();
     bool backwardChaining_(std::vector<std::string> *logs, std::map<std::string, std::string> *m, std::vector<std::map<std::string, std::string>> const & blacklist, Predicate const &goal) ;
     void backwardChaining();
+
+    void sortRecentPremises(bool value, std::string name, unsigned int nb_parameters);
 
 
     void sortRulesByNbPremisesDesc();

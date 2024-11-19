@@ -18,7 +18,7 @@ int main( int  argc, char* argv[]) {
 
     int opt;
 
-    while((opt = getopt(argc, argv, "tf:g:")) != -1){
+    while((opt = getopt(argc, argv, "tf:g:s:")) != -1){
         switch (opt)
         {
             case 'f':
@@ -35,6 +35,19 @@ int main( int  argc, char* argv[]) {
             case 't':
             {
                 Engine::TRACE = true;
+                break;
+            }
+            case 's':
+            {
+                if (std::string(optarg) == "1"){
+                    Engine::RULE_CHOICE = RuleChoice::NB_PREMISES_DESC;
+                }
+                else if (std::string(optarg) == "2"){
+                    Engine::RULE_CHOICE = RuleChoice::RECENT_PREMISE;
+                }
+                else {
+                    Engine::RULE_CHOICE = RuleChoice::DEFAULT;
+                }
                 break;
             }
             default:
