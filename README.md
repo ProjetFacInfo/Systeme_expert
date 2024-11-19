@@ -7,7 +7,7 @@
 - flex
 
 
-** Sur ubuntu : sudo apt update && sudo apt install cmake bison flex **
+**Sur ubuntu : sudo apt update && sudo apt install cmake bison flex**
 
 
 ## Build :
