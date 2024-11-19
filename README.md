@@ -34,7 +34,9 @@
 ### Choix du tri des règles
 
 -s1 : règles ayant le plus de prémisses à satisfaire
+
 -s2 : règles comportant comme prémisses les faits déduits les plus récents
 
 ./Expert_System -t -s1 -g "GOAL(X)" -f "chemin/nomDuFichierInstance"
+
 ./Expert_System -t -s2 -f "chemin/nomDuFichierInstance"
